@@ -29,7 +29,7 @@ public class Contract {
         return number;
     }
 
-    public LocalDate getLocalDate() {
+    public LocalDate getDate() {
         return date;
     }
 

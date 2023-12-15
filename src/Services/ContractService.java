@@ -8,14 +8,26 @@ import Entities.Installment;
 public class ContractService {
     private OnlinePaymentservice onlinePaymentservice;
 
-    public ContractService(OnlinePaymentservice onlinePaymentservice){
+    public ContractService(OnlinePaymentservice onlinePaymentservice) {
         this.onlinePaymentservice = onlinePaymentservice;
 
     }
 
-    public void processContract(Contract contract, int months){
-        contract.getInstalments().add(new Installment(LocalDate.of(2018, 8, 25),208.08));    
-        contract.getInstalments().add(new Installment(LocalDate.of(2018, 7, 25),206.04));
-        
+    public void processContract(Contract contract, int months) {
+        double basicQuota = contract.getTotalValue() / months;
+
+
+        for(int i=1; i <= months; i++){
+            LocalDate dueDate = contract.getDate().plusMonths(i);
+
+
+            double interest = onlinePaymentservice.interest(basicQuota, i);
+            double fee = onlinePaymentservice.PaymentFee(basicQuota + interest);
+
+
+            double quota = basicQuota + interest + fee;
+
+            contract.getInstalments().add(new Installment(dueDate, quota));
         }
+    }
 }
